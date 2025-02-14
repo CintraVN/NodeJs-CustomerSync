@@ -1,0 +1,17 @@
+{
+  "name": "nodejs-customersync",
+  "version": "1.0.0",
+  "description": "Código PHP para NodeJs - Refactor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "Cristhian Cintra",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "oracledb": "^6.7.2"
+  }
+}
