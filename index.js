@@ -1,8 +1,9 @@
 const oracledb = require('oracledb');
-const dbconnect = require('./dbconnect');
+const dbconnect = require('./src/config/dbconnect.js');
 const tratamentoDados = require('./src/utils/tratamentoDados.js');
 // Ativar o modo Thick e apontar para o Oracle Instant Client
 oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_basic\\instantclient_23_7' });
+const bpmClientes = require('./src/utils/bpmClientes.js');
 
 async function conectarBancoOracle() {
     let connection;
@@ -21,12 +22,13 @@ async function conectarBancoOracle() {
 
         //console.log(clientesPorVendedor.rows);
 
+        //Tratar os dados para padrão tabelas BPM
         clientesPorVendedor.rows.forEach(cliente => {
-            if (cliente.SERIALIZED_DATA) { 
+            if (cliente.SERIALIZED_DATA) {
                 try {
                     let clienteDados = JSON.parse(cliente.SERIALIZED_DATA); // Converte JSON corretamente
                     dadosTratados = tratamentoDados.TratarDados(clienteDados, dadosTratados, cliente.STATUS);
-                    console.log("Dados tratados após processamento:", JSON.stringify(dadosTratados, null, 2));
+                    //console.log("Dados tratados após processamento:", JSON.stringify(dadosTratados, null, 2));
                 } catch (error) {
                     console.error("Erro ao converter JSON:", error);
                 }
@@ -34,11 +36,28 @@ async function conectarBancoOracle() {
                 console.error("Erro: SERIALIZED_DATA está undefined para o cliente", cliente.DOCUMENTNR);
             }
         });
-        
-        //Para cada cliente
+        console.log(dadosTratados);
+        //Iterar enquanto for vazio
+        if (dadosTratados && Object.keys(dadosTratados).length > 0) {
 
-        //console.log(JSON.stringify(dadosTratados, null, 2));
+            //Para cada cliente
+            Object.entries(dadosTratados).forEach(([DOCUMENTNR, cliente]) => {
 
+                try {
+                    // Obtém o status atual do cliente
+                    let clienteStatus = cliente.STATUS;
+                    console.log("STATUS DO CLIENTE: "  + cliente.STATUS);
+                    // Cria ou atualiza o cliente
+                    let bpmCliente =  bpmClientes.updateOrCreateClient(cliente, "E");
+
+                } catch (error) {
+                    //console.log(error);
+                }
+
+            });
+        } else {
+            console.log("O objeto payload está vazio!");
+        }
 
     } catch (error) {
         console.error("Erro ao conectar:", error);
