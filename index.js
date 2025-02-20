@@ -4,6 +4,7 @@ const tratamentoDados = require('./src/utils/tratamentoDados.js');
 // Ativar o modo Thick e apontar para o Oracle Instant Client
 oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_basic\\instantclient_23_7' });
 const bpmClientes = require('./src/utils/bpmClientes.js');
+const bpmClienteOrigens = require('./src/utils/bpmClienteOrigens.js');
 
 async function conectarBancoOracle() {
     let connection;
@@ -18,8 +19,9 @@ async function conectarBancoOracle() {
         let ids_vendedores = await BuscarVendedores(connection);
         let clientesPorVendedor = await BuscarClientePorIDdeVendedor(connection, ids_vendedores);
         let dadosTratados = {};
-
-
+        let clienteStatus = null;
+        let origem_idVendedores = null;
+        //console.log("TESTE DE RETORNO NO MAIN"+ origem_idVendedores);
         //console.log(clientesPorVendedor.rows);
 
         //Tratar os dados para padrão tabelas BPM
@@ -27,6 +29,9 @@ async function conectarBancoOracle() {
             if (cliente.SERIALIZED_DATA) {
                 try {
                     let clienteDados = JSON.parse(cliente.SERIALIZED_DATA); // Converte JSON corretamente
+                    //console.log("STATUS CLIENTE: "+cliente.STATUS);
+                    clienteStatus = cliente.STATUS;
+                    origem_idVendedores = cliente.ORIGEM_ID;
                     dadosTratados = tratamentoDados.TratarDados(clienteDados, dadosTratados, cliente.STATUS);
                     //console.log("Dados tratados após processamento:", JSON.stringify(dadosTratados, null, 2));
                 } catch (error) {
@@ -36,19 +41,31 @@ async function conectarBancoOracle() {
                 console.error("Erro: SERIALIZED_DATA está undefined para o cliente", cliente.DOCUMENTNR);
             }
         });
-        console.log(dadosTratados);
+        //console.log(dadosTratados);
         //Iterar enquanto for vazio
         if (dadosTratados && Object.keys(dadosTratados).length > 0) {
 
             //Para cada cliente
-            Object.entries(dadosTratados).forEach(([DOCUMENTNR, cliente]) => {
+            Object.entries(dadosTratados).forEach(async ([DOCUMENTNR, cliente]) => {
 
                 try {
                     // Obtém o status atual do cliente
-                    let clienteStatus = cliente.STATUS;
-                    console.log("STATUS DO CLIENTE: "  + cliente.STATUS);
+                    //let clienteStatus = cliente.STATUS;
+                    //console.log("STATUS DO CLIENTE: "  + clienteStatus);
                     // Cria ou atualiza o cliente
-                    let bpmCliente =  bpmClientes.updateOrCreateClient(cliente, "E");
+                    let bpmCliente =  await bpmClientes.updateOrCreateClient(cliente, "E");
+                    
+
+                    let parametroOrigens = {
+                        'cliente_id' : bpmCliente,
+                        'origem_id' : origem_idVendedores
+                    }
+   
+                    await bpmClienteOrigens.updateOrCreateBpmClienteOrigens(parametroOrigens,clienteStatus);
+                    
+
+                    console.log("Parametros Origens: " + parametroOrigens.cliente_id +" "+ parametroOrigens.origem_id);
+                    
 
                 } catch (error) {
                     //console.log(error);
@@ -56,7 +73,7 @@ async function conectarBancoOracle() {
 
             });
         } else {
-            console.log("O objeto payload está vazio!");
+            console.log("O objeto dadosTratados está vazio!");
         }
 
     } catch (error) {
@@ -82,14 +99,16 @@ async function BuscarVendedores(connection) {
     try {
         let select = "select * from hub.sellers where status = 'A' and id not in (4,5)";
         let resultado_vendedores = await connection.execute(`${select}`, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-
+        //console.log(resultado_vendedores);
         if (resultado_vendedores.rows.length > 0) {
 
             let ids_vendedores = resultado_vendedores.rows.map(vendedor => vendedor.ID).sort((a, b) => a - b);
-
-            console.log("\n**IDs dos Vendedores Ativos:**");
+            //let origem_idVendedores = resultado_vendedores.rows.map(vendedor => vendedor.ORIGEM_ID).sort((a,b) => a - b);
+            //console.log("\n**IDs dos Vendedores Ativos:**");
             //console.table(ids_vendedores);
+            //console.table(origem_idVendedores);
 
+            //retornando objeto com ID e OrigemID dos vendedores
             return ids_vendedores;
         } else {
             console.log("Nenhum vendedor ativo encontrado!");
@@ -117,10 +136,14 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
             c.SERIALIZED_DATA, 
             G.SEQPESSOA, 
             c.DOCUMENTNR, 
-            cs.STATUS
+            cs.STATUS,
+            cs.SELLER_ID,
+            s.ORIGEM_ID
         FROM HUB.CUSTOMERS c
         JOIN HUB.CUSTOMER_SELLERS cs 
             ON cs.DOCUMENTNR = c.DOCUMENTNR
+        JOIN HUB.SELLERS S
+            ON s.ID = CS.SELLER_ID
         LEFT JOIN HUB.BPM_CLIENTES BC 
             ON BC.NROCGCCPF || LPAD(BC.DIGCGCCPF, 2, '0') = LTRIM(C.DOCUMENTNR, '0')
         LEFT JOIN CONSINCO.GE_PESSOA G 
@@ -141,7 +164,7 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
         });
 
         let resultado = await connection.execute(sql, bindParams, { outFormat: oracledb.OUT_FORMAT_OBJECT });
-
+        //console.log(resultado.rows);
 
         if (resultado.rows.length > 0) {
             console.log("\n**Clientes encontrados:**");
@@ -153,10 +176,18 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
             for (let row of resultado.rows) {
                 if (row.SERIALIZED_DATA && row.SERIALIZED_DATA.getData) {
                     row.SERIALIZED_DATA = await row.SERIALIZED_DATA.getData();
+                    
+                    //let serialized_data = JSON.parse(row.SERIALIZED_DATA);
+                    //serialized_data.origem_id = row.ORIGEM_ID;
+
+                    //row.SERIALIZED_DATA = JSON.stringify(serialized_data);
+                    //console.log(row);
+                    //console.log("resultado nova consulta: "+row.ORIGEM_ID);
+                    //console.log("Dados novos: "+row.ORIGEM_ID);
                 }
             }
-
-            console.log("\n**Clientes encontrados (conversão do CLOB) :**");
+            
+            //console.log("\n**Clientes encontrados (conversão do CLOB) :**");
             //console.log(resultado.rows);
         } else {
             console.log("Nenhum cliente encontrado!");
@@ -167,4 +198,8 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
         console.error("Erro ao buscar clientes com base no ID do vendedor", error);
         return [];
     }
+}
+
+async function BuscarOrigemIDVendedor(params) {
+    
 }
