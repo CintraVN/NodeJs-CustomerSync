@@ -7,6 +7,7 @@ const bpmClientes = require('./src/utils/bpmClientes.js');
 const bpmClienteOrigens = require('./src/utils/bpmClienteOrigens.js');
 const bpmClienteEnderecos = require('./src/utils/bpmClienteEnderecos.js');
 const bpmClienteTelefones = require('./src/utils/bpmClienteTelefones.js');
+const bpmClienteRca = require('./src/utils/bpmClienteRca.js');
 
 async function conectarBancoOracle() {
     let connection;
@@ -23,6 +24,8 @@ async function conectarBancoOracle() {
         let dadosTratados = {};
         let clienteStatus = null;
         let origem_idVendedores = null;
+        let company_idVendedores = null;
+        let parametroTelefone;
         //console.log("TESTE DE RETORNO NO MAIN"+ origem_idVendedores);
         //console.log(clientesPorVendedor.rows);
 
@@ -34,6 +37,7 @@ async function conectarBancoOracle() {
                     //console.log("STATUS CLIENTE: "+cliente.STATUS);
                     clienteStatus = cliente.STATUS;
                     origem_idVendedores = cliente.ORIGEM_ID;
+                    company_idVendedores = cliente.COMPANY_ID;
                     dadosTratados = tratamentoDados.TratarDados(clienteDados, dadosTratados, cliente.STATUS);
                     //console.log("Dados tratados após processamento:", JSON.stringify(dadosTratados, null, 2));
                 } catch (error) {
@@ -76,10 +80,10 @@ async function conectarBancoOracle() {
                         await bpmClienteEnderecos.bpmClienteEnderecos(parametroEndereco, address);
                     }
 
-
+                    //let parametroTelefone = null;
                     // Associa telefones
                     for (const [phonenr, phone] of Object.entries(cliente.phoneList)) {
-                        let parametroTelefone = {
+                         parametroTelefone = {
                             cliente_id: bpmCliente, // ID do cliente na BPM_CLIENTES
                             foneddd: phone.foneddd || null, // Código DDD
                             fonecmpl: phone.fonecmpl || null, // Complemento do telefone
@@ -92,11 +96,29 @@ async function conectarBancoOracle() {
                         await bpmClienteTelefones.bpmClienteTelefones(parametroTelefone, phone);
                     }
 
+                    console.log("Valor do parametro telefone antes de entrar no laco: "+parametroTelefone);
+                    // Busca o representante na tabela MAD_REPRESENTANTE
+                    let representante = await buscarRepresentante(connection, company_idVendedores);
+                    if (representante) {
+                        console.log("Representante encontrado: ");
+                        console.table(representante);
+                    
+                        // Chama a função para atualizar ou criar o RCA do cliente
+                        console.log("Valor do parametro telefone antes de entrar na funcao: "+parametroTelefone);
+                        await bpmClienteRca.bpmClienteRca(representante, cliente, parametroTelefone, bpmCliente);
+                    
+                    } else {
+                        console.log("Nenhum representante encontrado para a company_id:", company_idVendedores);
+                    }
+
+
+                    
+
                     //console.log("Parametros Origens: " + parametroOrigens.cliente_id +" "+ parametroOrigens.origem_id);
 
 
                 } catch (error) {
-                    //console.log(error);
+                    console.log(error);
                 }
 
             });
@@ -166,7 +188,8 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
             c.DOCUMENTNR, 
             cs.STATUS,
             cs.SELLER_ID,
-            s.ORIGEM_ID
+            s.ORIGEM_ID,
+            s.COMPANY_ID
         FROM HUB.CUSTOMERS c
         JOIN HUB.CUSTOMER_SELLERS cs 
             ON cs.DOCUMENTNR = c.DOCUMENTNR
@@ -184,7 +207,7 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
           AND TRUNC(c.CREATED_AT) >= SYSDATE - 560
           AND BC.NROCGCCPF IS NULL
     `;
-
+        //560
         // Criar um objeto de binds dinâmico
         let bindParams = {};
         ids_vendedores.forEach((id, i) => {
@@ -225,5 +248,32 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
     } catch (error) {
         console.error("Erro ao buscar clientes com base no ID do vendedor", error);
         return [];
+    }
+}
+
+async function buscarRepresentante(connection, company_id) {
+
+    try {
+        connection = await oracledb.getConnection(dbconnect);
+
+        const query = `
+            SELECT nroempresa, nrorepresentante, nroequipe, apelido, nrosegmento
+            FROM CONSINCO.MAD_REPRESENTANTE
+            WHERE NROREPRESENTANTE BETWEEN 79 AND 82
+            AND NROEMPRESA = :company_id
+        `;
+
+        const result = await connection.execute(query, { company_id }, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        console.log("Resultado consulta RCA na MAD_REPRESENTANTE"+result.rows);
+        return result.rows.length > 0 ? result.rows[0] : null;
+
+    } catch (error) {
+        console.error("Erro ao buscar representante:", error);
+        throw error;
+    } finally {
+        if (connection) {
+            await connection.close();
+            console.log("Conexão encerrada com sucesso após buscar o representante.");
+        }
     }
 }
