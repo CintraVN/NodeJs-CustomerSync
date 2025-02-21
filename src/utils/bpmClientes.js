@@ -15,13 +15,8 @@ class bpmClientes {
                 nrocgccpf: cliente.nrocgccpf,
                 digcgccpf: cliente.digcgccpf
             });
-            //console.log("===============");
-            //console.log("Mostrar usuário ja cadastrado: " + verificaResultado.rows);
-            //console.log("Mostrar usuário ja cadastrado: " + verificaResultado.rows[0]);
-            //console.log("===============");
-            //let bpmClienteId = NULL;
+
             let bpmClienteId = verificaResultado.rows[0];
-            //console.log("saida verificando se o cliente ja existe no banco: "+bpmClienteId);
 
             if (verificaResultado.rows.length > 0) {
                 // Cliente já existe -> Atualiza os dados
@@ -73,9 +68,6 @@ class bpmClientes {
                 
 
                 bpmClienteId = result.outBinds.id[0]; // Pega o ID gerado
-                //console.log("Novo cliente inserido na hub.bpm_clientes ID: "+bpmClienteId);
-                //console.log("CPF: "+cliente.nrocgccpf+cliente.digcgccpf);
-                //console.log("\n===============**===============\n");
             }
 
             // Se for cliente IFC precisa gravar a origem 'E'

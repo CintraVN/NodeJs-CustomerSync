@@ -26,20 +26,17 @@ async function conectarBancoOracle() {
         let origem_idVendedores = null;
         let company_idVendedores = null;
         let parametroTelefone;
-        //console.log("TESTE DE RETORNO NO MAIN"+ origem_idVendedores);
-        //console.log(clientesPorVendedor.rows);
+
 
         //Tratar os dados para padrão tabelas BPM
         clientesPorVendedor.rows.forEach(cliente => {
             if (cliente.SERIALIZED_DATA) {
                 try {
                     let clienteDados = JSON.parse(cliente.SERIALIZED_DATA); // Converte JSON corretamente
-                    //console.log("STATUS CLIENTE: "+cliente.STATUS);
                     clienteStatus = cliente.STATUS;
                     origem_idVendedores = cliente.ORIGEM_ID;
                     company_idVendedores = cliente.COMPANY_ID;
                     dadosTratados = tratamentoDados.TratarDados(clienteDados, dadosTratados, cliente.STATUS);
-                    //console.log("Dados tratados após processamento:", JSON.stringify(dadosTratados, null, 2));
                 } catch (error) {
                     console.error("Erro ao converter JSON:", error);
                 }
@@ -80,7 +77,6 @@ async function conectarBancoOracle() {
                         await bpmClienteEnderecos.bpmClienteEnderecos(parametroEndereco, address);
                     }
 
-                    //let parametroTelefone = null;
                     // Associa telefones
                     for (const [phonenr, phone] of Object.entries(cliente.phoneList)) {
                          parametroTelefone = {
@@ -96,26 +92,16 @@ async function conectarBancoOracle() {
                         await bpmClienteTelefones.bpmClienteTelefones(parametroTelefone, phone);
                     }
 
-                    console.log("Valor do parametro telefone antes de entrar no laco: "+parametroTelefone);
                     // Busca o representante na tabela MAD_REPRESENTANTE
                     let representante = await buscarRepresentante(connection, company_idVendedores);
                     if (representante) {
-                        console.log("Representante encontrado: ");
-                        console.table(representante);
-                    
+
                         // Chama a função para atualizar ou criar o RCA do cliente
-                        console.log("Valor do parametro telefone antes de entrar na funcao: "+parametroTelefone);
                         await bpmClienteRca.bpmClienteRca(representante, cliente, parametroTelefone, bpmCliente);
                     
                     } else {
                         console.log("Nenhum representante encontrado para a company_id:", company_idVendedores);
                     }
-
-
-                    
-
-                    //console.log("Parametros Origens: " + parametroOrigens.cliente_id +" "+ parametroOrigens.origem_id);
-
 
                 } catch (error) {
                     console.log(error);
@@ -149,16 +135,11 @@ async function BuscarVendedores(connection) {
     try {
         let select = "select * from hub.sellers where status = 'A' and id not in (4,5)";
         let resultado_vendedores = await connection.execute(`${select}`, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-        //console.log(resultado_vendedores);
+        
         if (resultado_vendedores.rows.length > 0) {
 
             let ids_vendedores = resultado_vendedores.rows.map(vendedor => vendedor.ID).sort((a, b) => a - b);
-            //let origem_idVendedores = resultado_vendedores.rows.map(vendedor => vendedor.ORIGEM_ID).sort((a,b) => a - b);
-            //console.log("\n**IDs dos Vendedores Ativos:**");
-            //console.table(ids_vendedores);
-            //console.table(origem_idVendedores);
 
-            //retornando objeto com ID e OrigemID dos vendedores
             return ids_vendedores;
         } else {
             console.log("Nenhum vendedor ativo encontrado!");
@@ -207,7 +188,6 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
           AND TRUNC(c.CREATED_AT) >= SYSDATE - 560
           AND BC.NROCGCCPF IS NULL
     `;
-        //560
         // Criar um objeto de binds dinâmico
         let bindParams = {};
         ids_vendedores.forEach((id, i) => {
@@ -215,31 +195,18 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
         });
 
         let resultado = await connection.execute(sql, bindParams, { outFormat: oracledb.OUT_FORMAT_OBJECT });
-        //console.log(resultado.rows);
 
         if (resultado.rows.length > 0) {
             console.log("\n**Clientes encontrados:**");
             console.table(resultado.rows);
 
-
-
             // **Converter os CLOBs para strings**
             for (let row of resultado.rows) {
                 if (row.SERIALIZED_DATA && row.SERIALIZED_DATA.getData) {
                     row.SERIALIZED_DATA = await row.SERIALIZED_DATA.getData();
-
-                    //let serialized_data = JSON.parse(row.SERIALIZED_DATA);
-                    //serialized_data.origem_id = row.ORIGEM_ID;
-
-                    //row.SERIALIZED_DATA = JSON.stringify(serialized_data);
-                    //console.log(row);
-                    //console.log("resultado nova consulta: "+row.ORIGEM_ID);
-                    //console.log("Dados novos: "+row.ORIGEM_ID);
                 }
             }
 
-            //console.log("\n**Clientes encontrados (conversão do CLOB) :**");
-            //console.log(resultado.rows);
         } else {
             console.log("Nenhum cliente encontrado!");
         }
