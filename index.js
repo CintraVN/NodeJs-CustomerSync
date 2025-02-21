@@ -5,6 +5,7 @@ const tratamentoDados = require('./src/utils/tratamentoDados.js');
 oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_basic\\instantclient_23_7' });
 const bpmClientes = require('./src/utils/bpmClientes.js');
 const bpmClienteOrigens = require('./src/utils/bpmClienteOrigens.js');
+const bpmClienteEnderecos = require('./src/utils/bpmClienteEnderecos.js');
 
 async function conectarBancoOracle() {
     let connection;
@@ -41,7 +42,7 @@ async function conectarBancoOracle() {
                 console.error("Erro: SERIALIZED_DATA está undefined para o cliente", cliente.DOCUMENTNR);
             }
         });
-        //console.log(dadosTratados);
+        console.log(dadosTratados);
         //Iterar enquanto for vazio
         if (dadosTratados && Object.keys(dadosTratados).length > 0) {
 
@@ -49,9 +50,6 @@ async function conectarBancoOracle() {
             Object.entries(dadosTratados).forEach(async ([DOCUMENTNR, cliente]) => {
 
                 try {
-                    // Obtém o status atual do cliente
-                    //let clienteStatus = cliente.STATUS;
-                    //console.log("STATUS DO CLIENTE: "  + clienteStatus);
                     // Cria ou atualiza o cliente
                     let bpmCliente =  await bpmClientes.updateOrCreateClient(cliente, "E");
                     
@@ -63,8 +61,22 @@ async function conectarBancoOracle() {
    
                     await bpmClienteOrigens.updateOrCreateBpmClienteOrigens(parametroOrigens,clienteStatus);
                     
+                    // Associa enderecos
 
-                    console.log("Parametros Origens: " + parametroOrigens.cliente_id +" "+ parametroOrigens.origem_id);
+                    for (const [postalcd, address] of Object.entries(cliente.addressList)) {
+                        let parametroEndereco = {
+                            cliente_id: bpmCliente, // ID do cliente na BPM_CLIENTES
+                            cep: postalcd, // Código postal do endereço
+                            tipoend: '1' // Tipo de endereço (1 = Principal)
+                        };
+                        console.log("TABELA DE ENDERECOS: \n");
+                        console.table(parametroEndereco);
+                        console.table(address);
+
+                        await bpmClienteEnderecos.bpmClienteEnderecos(parametroEndereco, address);
+                    }
+
+                    //console.log("Parametros Origens: " + parametroOrigens.cliente_id +" "+ parametroOrigens.origem_id);
                     
 
                 } catch (error) {
@@ -198,8 +210,4 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
         console.error("Erro ao buscar clientes com base no ID do vendedor", error);
         return [];
     }
-}
-
-async function BuscarOrigemIDVendedor(params) {
-    
 }
