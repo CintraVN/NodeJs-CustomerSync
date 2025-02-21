@@ -6,6 +6,7 @@ oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_ba
 const bpmClientes = require('./src/utils/bpmClientes.js');
 const bpmClienteOrigens = require('./src/utils/bpmClienteOrigens.js');
 const bpmClienteEnderecos = require('./src/utils/bpmClienteEnderecos.js');
+const bpmClienteTelefones = require('./src/utils/bpmClienteTelefones.js');
 
 async function conectarBancoOracle() {
     let connection;
@@ -51,18 +52,17 @@ async function conectarBancoOracle() {
 
                 try {
                     // Cria ou atualiza o cliente
-                    let bpmCliente =  await bpmClientes.updateOrCreateClient(cliente, "E");
-                    
+                    let bpmCliente = await bpmClientes.updateOrCreateClient(cliente, "E");
+
 
                     let parametroOrigens = {
-                        'cliente_id' : bpmCliente,
-                        'origem_id' : origem_idVendedores
+                        'cliente_id': bpmCliente,
+                        'origem_id': origem_idVendedores
                     }
-   
-                    await bpmClienteOrigens.updateOrCreateBpmClienteOrigens(parametroOrigens,clienteStatus);
-                    
-                    // Associa enderecos
 
+                    await bpmClienteOrigens.updateOrCreateBpmClienteOrigens(parametroOrigens, clienteStatus);
+
+                    // Associa enderecos
                     for (const [postalcd, address] of Object.entries(cliente.addressList)) {
                         let parametroEndereco = {
                             cliente_id: bpmCliente, // ID do cliente na BPM_CLIENTES
@@ -76,8 +76,24 @@ async function conectarBancoOracle() {
                         await bpmClienteEnderecos.bpmClienteEnderecos(parametroEndereco, address);
                     }
 
+
+                    // Associa telefones
+                    for (const [phonenr, phone] of Object.entries(cliente.phoneList)) {
+                        let parametroTelefone = {
+                            cliente_id: bpmCliente, // ID do cliente na BPM_CLIENTES
+                            foneddd: phone.foneddd || null, // Código DDD
+                            fonecmpl: phone.fonecmpl || null, // Complemento do telefone
+                            fonenro: phonenr // Número do telefone 
+                        };
+                        console.log("TABELA DE CONTATOS: \n");
+                        console.table(parametroTelefone);
+                        console.table(phone);
+
+                        await bpmClienteTelefones.bpmClienteTelefones(parametroTelefone, phone);
+                    }
+
                     //console.log("Parametros Origens: " + parametroOrigens.cliente_id +" "+ parametroOrigens.origem_id);
-                    
+
 
                 } catch (error) {
                     //console.log(error);
@@ -188,7 +204,7 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
             for (let row of resultado.rows) {
                 if (row.SERIALIZED_DATA && row.SERIALIZED_DATA.getData) {
                     row.SERIALIZED_DATA = await row.SERIALIZED_DATA.getData();
-                    
+
                     //let serialized_data = JSON.parse(row.SERIALIZED_DATA);
                     //serialized_data.origem_id = row.ORIGEM_ID;
 
@@ -198,7 +214,7 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
                     //console.log("Dados novos: "+row.ORIGEM_ID);
                 }
             }
-            
+
             //console.log("\n**Clientes encontrados (conversão do CLOB) :**");
             //console.log(resultado.rows);
         } else {
