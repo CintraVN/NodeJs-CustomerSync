@@ -8,16 +8,21 @@ const bpmClienteOrigens = require('./src/utils/bpmClienteOrigens.js');
 const bpmClienteEnderecos = require('./src/utils/bpmClienteEnderecos.js');
 const bpmClienteTelefones = require('./src/utils/bpmClienteTelefones.js');
 const bpmClienteRca = require('./src/utils/bpmClienteRca.js');
+const logger = require('./src/utils/logger.js');
+
 
 async function conectarBancoOracle() {
     let connection;
 
     try {
         console.log("Tentando conectar ao Oracle...");
+        logger.info("Tentando conectar ao Oracle...");
         connection = await oracledb.getConnection(dbconnect);
 
         console.log("Conectado ao Oracle!");
+        logger.info("Conectado ao Oracle!");
         console.log("***Versão do servidor: " + connection.oracleServerVersionString + "***");
+        logger.info("***Versão do servidor: " + connection.oracleServerVersionString + "***");
 
         let ids_vendedores = await BuscarVendedores(connection);
         let clientesPorVendedor = await BuscarClientePorIDdeVendedor(connection, ids_vendedores);
@@ -39,9 +44,11 @@ async function conectarBancoOracle() {
                     dadosTratados = tratamentoDados.TratarDados(clienteDados, dadosTratados, cliente.STATUS);
                 } catch (error) {
                     console.error("Erro ao converter JSON:", error);
+                    logger.error("Erro ao converter JSON:", error);
                 }
             } else {
                 console.error("Erro: SERIALIZED_DATA está undefined para o cliente", cliente.DOCUMENTNR);
+                logger.error("Erro: SERIALIZED_DATA está undefined para o cliente", cliente.DOCUMENTNR);
             }
         });
         console.log(dadosTratados);
@@ -101,26 +108,32 @@ async function conectarBancoOracle() {
                     
                     } else {
                         console.log("Nenhum representante encontrado para a company_id:", company_idVendedores);
+                        logger.debug("Nenhum representante encontrado para a company_id:", company_idVendedores);
                     }
 
                 } catch (error) {
                     console.log(error);
+                    logger.error('Erro ao na sincronia',error);
                 }
 
             });
         } else {
             console.log("O objeto dadosTratados está vazio!");
+            logger.warn("O objeto dadosTratados está vazio!");
         }
 
     } catch (error) {
         console.error("Erro ao conectar:", error);
+        logger.error("Erro ao conectar:", error);
     } finally {
         if (connection) {
             try {
                 await connection.close();
                 console.log("Conexao encerrada com sucesso");
+                logger.info("Conexao encerrada com sucesso");
             } catch (ErroEncerramento) {
                 console.log("Erro ao encerrar conexao: ", ErroEncerramento);
+                logger.error("Erro ao encerrar conexao: ", ErroEncerramento);
             }
         }
     }
@@ -143,10 +156,12 @@ async function BuscarVendedores(connection) {
             return ids_vendedores;
         } else {
             console.log("Nenhum vendedor ativo encontrado!");
+            logger.warn("Nenhum vendedor ativo encontrado!");
             return [];
         }
     } catch (error) {
         console.error("Erro ao buscar vendedores ativos no sellers:", error);
+        logger.error("Erro ao buscar vendedores ativos no sellers:", error);
         return [];
     }
 }
@@ -156,6 +171,7 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
 
         if (ids_vendedores.length === 0) {
             console.log("Nenhum ID de vendedor fornecido.");
+            logger.debug("Nenhum ID de vendedor fornecido.");
             return [];
         }
 
@@ -198,6 +214,7 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
 
         if (resultado.rows.length > 0) {
             console.log("\n**Clientes encontrados:**");
+            logger.debug("\n**Clientes encontrados:**");
             console.table(resultado.rows);
 
             // **Converter os CLOBs para strings**
@@ -209,11 +226,13 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
 
         } else {
             console.log("Nenhum cliente encontrado!");
+            logger.warn("Nenhum cliente encontrado!");
         }
 
         return resultado;
     } catch (error) {
         console.error("Erro ao buscar clientes com base no ID do vendedor", error);
+        logger.error("Erro ao buscar clientes com base no ID do vendedor", error);
         return [];
     }
 }
@@ -236,11 +255,13 @@ async function buscarRepresentante(connection, company_id) {
 
     } catch (error) {
         console.error("Erro ao buscar representante:", error);
+        logger.error("Erro ao buscar representante:", error);
         throw error;
     } finally {
         if (connection) {
             await connection.close();
             console.log("Conexão encerrada com sucesso após buscar o representante.");
+            logger.info("Conexão encerrada com sucesso após buscar o representante.");
         }
     }
 }

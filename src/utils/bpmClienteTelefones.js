@@ -1,6 +1,6 @@
 const oracledb = require("oracledb");
 const dbconnect = require('../config/dbconnect.js') // Arquivo de conexão com Oracle
-
+const logger = require('../../src/utils/logger');
 class bpmClienteTelefones {
     static async bpmClienteTelefones(parametroTelefone, phone) {
         
@@ -35,6 +35,7 @@ class bpmClienteTelefones {
                 }, { autoCommit: true });
 
                 console.log(`Telefone atualizado para o cliente ${parametroTelefone.cliente_id}`);
+                logger.debug(`Telefone atualizado para o cliente ${parametroTelefone.cliente_id}`);
             } else {
                 // Insere um novo telefone
                 const insertQuery = `
@@ -49,11 +50,13 @@ class bpmClienteTelefones {
                 }, { autoCommit: true });
 
                 console.log(`Novo telefone associado ao cliente ${parametroTelefone.cliente_id}`);
+                logger.debug(`Novo telefone associado ao cliente ${parametroTelefone.cliente_id}`);
             }
 
 
         } catch (error) {
             console.error("Erro ao gravar/atualizar telefone:", error);
+            logger.error("Erro ao gravar/atualizar telefone:", error);
             throw error;
         } finally {
             if (connection) {

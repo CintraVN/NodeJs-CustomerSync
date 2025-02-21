@@ -1,5 +1,6 @@
 const oracledb = require("oracledb");
 const dbconnect = require('../config/dbconnect.js') // Arquivo de conexão com Oracle
+const logger = require('../../src/utils/logger');
 class bpmClientes {
     static async updateOrCreateClient(cliente, origem = null) {
         let connection;
@@ -83,6 +84,7 @@ class bpmClientes {
             return bpmClienteId;
         } catch (error) {
             console.error("Erro ao criar/atualizar cliente:", error);
+            logger.error("Erro ao criar/atualizar cliente:", error);
             throw error;
         } finally {
             if (connection) {

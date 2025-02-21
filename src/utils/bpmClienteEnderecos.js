@@ -1,6 +1,6 @@
 const oracledb = require("oracledb");
 const dbconnect = require('../config/dbconnect.js') // Arquivo de conexão com Oracle
-
+const logger = require('../../src/utils/logger');
 class bpmClienteEnderecos {
     static async bpmClienteEnderecos(parametroEndereco, address) {
 
@@ -45,6 +45,7 @@ class bpmClienteEnderecos {
                 `;
                 await connection.execute(updateQuery, dadosCombinados, { autoCommit: true });
                 console.log(`Endereço atualizado com sucesso para o cliente ${parametroEndereco.cliente_id}`);
+                logger.debug(`Endereço atualizado com sucesso para o cliente ${parametroEndereco.cliente_id}`);
             } else {
                 // Se o endereço não existe, insere um novo registro
                 const insertQuery = `
@@ -55,11 +56,13 @@ class bpmClienteEnderecos {
                 `;
                 await connection.execute(insertQuery, dadosCombinados, { autoCommit: true });
                 console.log(`Novo endereço associado ao cliente ${parametroEndereco.cliente_id}`);
+                logger.debug(`Novo endereço associado ao cliente ${parametroEndereco.cliente_id}`);
             }
 
 
         } catch (error) {
             console.error("Erro ao atualizar ou inserir endereço do cliente:", error);
+            logger.error("Erro ao atualizar ou inserir endereço do cliente:", error);
             throw error;
         } finally {
             if (connection) {

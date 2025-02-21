@@ -1,5 +1,6 @@
 const oracledb = require("oracledb");
 const dbconnect = require('../config/dbconnect.js') // Arquivo de conexão com Oracle
+const logger = require('../../src/utils/logger');
 
 class bpmClienteRca {
     static async bpmClienteRca(representante, customer, paramsPhone, bpmCliente) {
@@ -46,6 +47,7 @@ class bpmClienteRca {
                 }, { autoCommit: true });
 
                 console.log(`RCA atualizado para o cliente ${bpmCliente}`);
+                logger.debug(`RCA atualizado para o cliente ${bpmCliente}`);
             } else {
                 // Insere um novo RCA
                 const insertQuery = `
@@ -71,11 +73,13 @@ class bpmClienteRca {
                 }, { autoCommit: true });
 
                 console.log(`Novo RCA associado ao cliente ${bpmCliente}`);
+                logger.debug(`Novo RCA associado ao cliente ${bpmCliente}`);
             }
 
 
         } catch (error) {
             console.error("Erro ao criar/atualizar RCA:", error);
+            logger.error("Erro ao criar/atualizar RCA:", error);
             throw error;
         } finally {
             if (connection) {

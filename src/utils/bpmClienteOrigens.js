@@ -1,6 +1,6 @@
 const oracledb = require("oracledb");
 const dbconnect = require('../config/dbconnect.js') // Arquivo de conexão com Oracle
-
+const logger = require('../../src/utils/logger');
 class bpmClienteOrigens {
     static async updateOrCreateBpmClienteOrigens(parametroOrigens, clienteStatus) {
 
@@ -33,6 +33,7 @@ class bpmClienteOrigens {
                 }, { autoCommit: true });
 
                 console.log(`Origem atualizada com sucesso para o cliente ${parametroOrigens.cliente_id} Origem: ${parametroOrigens.origem_id}`);
+                logger.debug(`Origem atualizada com sucesso para o cliente ${parametroOrigens.cliente_id} Origem: ${parametroOrigens.origem_id}`);
             } else {
                 // Se não existe, insere um novo registro
                 const insertQuery = `
@@ -46,12 +47,14 @@ class bpmClienteOrigens {
                 }, { autoCommit: true });
 
                 console.log(`Nova origem associada ao cliente ${parametroOrigens.cliente_id} Origem: ${parametroOrigens.origem_id}`);
+                logger.debug(`Nova origem associada ao cliente ${parametroOrigens.cliente_id} Origem: ${parametroOrigens.origem_id}`);
             }
 
 
 
         } catch (error) {
             console.error("Erro ao manipular tabela HUB.BPM_CLIENTE_ORIGENS :", error);
+            logger.error("Erro ao manipular tabela HUB.BPM_CLIENTE_ORIGENS :", error);
             throw error;
         } finally {
             if (connection) {
