@@ -34,7 +34,6 @@ class bpmClienteTelefones {
                     fonecmpl: phone.fonecmpl || null
                 }, { autoCommit: true });
 
-                //console.log(`Telefone atualizado para o cliente ${parametroTelefone.cliente_id}`);
                 logger.debug(`Telefone atualizado para o cliente ${parametroTelefone.cliente_id}`);
             } else {
                 // Insere um novo telefone
@@ -49,13 +48,11 @@ class bpmClienteTelefones {
                     fonecmpl: phone.fonecmpl || null
                 }, { autoCommit: true });
 
-                //console.log(`Novo telefone associado ao cliente ${parametroTelefone.cliente_id}`);
                 logger.debug(`Novo telefone associado ao cliente ${parametroTelefone.cliente_id}`);
             }
 
 
         } catch (error) {
-            //console.error("Erro ao gravar/atualizar telefone:", error);
             logger.error(`Erro ao gravar/atualizar telefone cliente ID: ${parametroTelefone.cliente_id}`, error);
             throw error;
         } finally {

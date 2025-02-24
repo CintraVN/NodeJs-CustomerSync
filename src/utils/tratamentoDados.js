@@ -3,12 +3,9 @@ class tratamentoDados {
     static TratarDados(clienteDados, dadosTratados = {}, status) {
         try {
             if (!clienteDados.documentnr) {
-                //console.log("Nenhum valor encontrado retornando vazio");
                 logger.warn("Nenhum valor encontrado retornando vazio");
                 return dadosTratados;
             }
-
-
 
             // Formatar o número do documento para 14 dígitos com zeros à esquerda
             clienteDados.documentnr = clienteDados.documentnr.toString().padStart(14, "0");

@@ -1,0 +1,28 @@
+services:
+  app:
+    build: .
+    container_name: Node_integra_customer_BPM
+    ports:
+      - "3030:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - oracle
+    networks:
+      - my-network
+    volumes:
+      - ./logs:/usr/src/app/logs   # Monta a pasta de logs
+      - ./.env:/usr/src/app/.env   # Monta o arquivo .env
+
+  oracle:
+    image: oracleinanutshell/oracle-xe-11g
+    environment:
+      - ORACLE_ALLOW_REMOTE=true
+    ports:
+      - "1521:1521"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

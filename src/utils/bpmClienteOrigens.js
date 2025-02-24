@@ -32,7 +32,6 @@ class bpmClienteOrigens {
                     origem_id: parametroOrigens.origem_id
                 }, { autoCommit: true });
 
-                //console.log(`Origem atualizada com sucesso para o cliente ${parametroOrigens.cliente_id} Origem: ${parametroOrigens.origem_id}`);
                 logger.debug(`Origem atualizada com sucesso para o cliente ${parametroOrigens.cliente_id} Origem: ${parametroOrigens.origem_id}`);
             } else {
                 // Se não existe, insere um novo registro
@@ -46,14 +45,12 @@ class bpmClienteOrigens {
                     status: clienteStatus
                 }, { autoCommit: true });
 
-                //console.log(`Nova origem associada ao cliente ${parametroOrigens.cliente_id} Origem: ${parametroOrigens.origem_id}`);
                 logger.debug(`Nova origem associada ao cliente ${parametroOrigens.cliente_id} Origem: ${parametroOrigens.origem_id}`);
             }
 
 
 
         } catch (error) {
-            //console.error("Erro ao manipular tabela HUB.BPM_CLIENTE_ORIGENS :", error);
             logger.error(`Erro ao manipular tabela HUB.BPM_CLIENTE_ORIGENS cliente ID: ${parametroOrigens.cliente_id}`, error);
             throw error;
         } finally {

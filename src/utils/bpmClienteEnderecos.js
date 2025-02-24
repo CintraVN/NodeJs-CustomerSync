@@ -44,7 +44,6 @@ class bpmClienteEnderecos {
                     WHERE cliente_id = :cliente_id AND cep = :cep
                 `;
                 await connection.execute(updateQuery, dadosCombinados, { autoCommit: true });
-                //console.log(`Endereço atualizado com sucesso para o cliente ${parametroEndereco.cliente_id}`);
                 logger.debug(`Endereço atualizado com sucesso para o cliente ${parametroEndereco.cliente_id}`);
             } else {
                 // Se o endereço não existe, insere um novo registro
@@ -55,13 +54,11 @@ class bpmClienteEnderecos {
                             :nrologradouro, :cmpltlogradouro, :cep, :tipoend, SYSDATE)
                 `;
                 await connection.execute(insertQuery, dadosCombinados, { autoCommit: true });
-                //console.log(`Novo endereço associado ao cliente ${parametroEndereco.cliente_id}`);
                 logger.debug(`Novo endereço associado ao cliente ${parametroEndereco.cliente_id}`);
             }
 
 
         } catch (error) {
-            //console.error("Erro ao atualizar ou inserir endereço do cliente:", error);
             logger.error(`Erro ao atualizar ou inserir endereço do cliente: ${parametroEndereco.cliente_id}`, error);
             throw error;
         } finally {
@@ -128,12 +125,10 @@ function formatarNomeCidade(cidade) {
         .replace(/[\u0300-\u036f]/g, "") // Remove acentos
         .toUpperCase();
 
-    //console.log("Cidade após normalização inicial: " + cidade);
     logger.debug("Cidade após normalização inicial: " + cidade);
     // Verifica se a cidade está nas variações
     for (let i = 0; i < cidadesVariacoes.length; i++) {
         if (cidadesVariacoes[i].includes(cidade.trim())) {
-            //console.log("Cidade encontrada na lista de variações: " + cidadesVariacoes[i][cidadesVariacoes[i].length - 1]);
             logger.debug("Cidade encontrada na lista de variações: " + cidadesVariacoes[i][cidadesVariacoes[i].length - 1]);
             return cidadesVariacoes[i][cidadesVariacoes[i].length - 1]; // Retorna a versão padronizada (última posição)
         }
