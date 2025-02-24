@@ -56,7 +56,7 @@ class bpmClienteTelefones {
 
         } catch (error) {
             //console.error("Erro ao gravar/atualizar telefone:", error);
-            logger.error("Erro ao gravar/atualizar telefone:", error);
+            logger.error(`Erro ao gravar/atualizar telefone cliente ID: ${parametroTelefone.cliente_id}`, error);
             throw error;
         } finally {
             if (connection) {

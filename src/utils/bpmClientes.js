@@ -85,7 +85,7 @@ class bpmClientes {
             return bpmClienteId;
         } catch (error) {
             //console.error("Erro ao criar/atualizar cliente:", error);
-            logger.error("Erro ao criar/atualizar cliente:", error);
+            logger.error(`Erro ao criar/atualizar cliente: ${cliente.nrocgccpf}${cliente.digcgccpf}`, error);
             throw error;
         } finally {
             if (connection) {

@@ -61,7 +61,7 @@ class tratamentoDados {
             }
             return dadosTratados;
         } catch (error) {
-            logger.error("Erro ao tratar dados do json:", error);
+            logger.error(`Erro ao tratar dados do json cliente NR DOCUMENTO: ${clienteDados.documentnr}`, error);
             throw error;
         }
     }

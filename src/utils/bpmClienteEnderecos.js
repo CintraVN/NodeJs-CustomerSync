@@ -62,7 +62,7 @@ class bpmClienteEnderecos {
 
         } catch (error) {
             //console.error("Erro ao atualizar ou inserir endereço do cliente:", error);
-            logger.error("Erro ao atualizar ou inserir endereço do cliente:", error);
+            logger.error(`Erro ao atualizar ou inserir endereço do cliente: ${parametroEndereco.cliente_id}`, error);
             throw error;
         } finally {
             if (connection) {

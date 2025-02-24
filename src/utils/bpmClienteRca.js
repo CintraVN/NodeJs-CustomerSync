@@ -79,7 +79,7 @@ class bpmClienteRca {
 
         } catch (error) {
             //console.error("Erro ao criar/atualizar RCA:", error);
-            logger.error("Erro ao criar/atualizar RCA:", error);
+            logger.error(`Erro ao criar/atualizar RCA cliente ID: ${bpmCliente}`, error);
             throw error;
         } finally {
             if (connection) {

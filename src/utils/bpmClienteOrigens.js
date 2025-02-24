@@ -54,7 +54,7 @@ class bpmClienteOrigens {
 
         } catch (error) {
             //console.error("Erro ao manipular tabela HUB.BPM_CLIENTE_ORIGENS :", error);
-            logger.error("Erro ao manipular tabela HUB.BPM_CLIENTE_ORIGENS :", error);
+            logger.error(`Erro ao manipular tabela HUB.BPM_CLIENTE_ORIGENS cliente ID: ${parametroOrigens.cliente_id}`, error);
             throw error;
         } finally {
             if (connection) {
