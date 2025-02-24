@@ -81,14 +81,16 @@ class bpmClientes {
                 await connection.execute(updateOrigemQuery, { origem, id: bpmClienteId }, { autoCommit: true });
             }
 
+            logger.debug(`Cliente atualizado/criado com sucesso na BPM_CLIENTE com o ID:  ${bpmClienteId}`);
             return bpmClienteId;
         } catch (error) {
-            console.error("Erro ao criar/atualizar cliente:", error);
+            //console.error("Erro ao criar/atualizar cliente:", error);
             logger.error("Erro ao criar/atualizar cliente:", error);
             throw error;
         } finally {
             if (connection) {
                 await connection.close();
+                logger.info("Conexão encerrada com sucesso após criar/atualizar o cliente.");
             }
         }
     }

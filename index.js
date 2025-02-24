@@ -9,6 +9,8 @@ const bpmClienteEnderecos = require('./src/utils/bpmClienteEnderecos.js');
 const bpmClienteTelefones = require('./src/utils/bpmClienteTelefones.js');
 const bpmClienteRca = require('./src/utils/bpmClienteRca.js');
 const logger = require('./src/utils/logger.js');
+require('dotenv').config();
+const dateRange = process.env.SQL_DATE_RANGE || 15; //definir dias da pesquisa.
 
 
 async function conectarBancoOracle() {
@@ -43,15 +45,15 @@ async function conectarBancoOracle() {
                     company_idVendedores = cliente.COMPANY_ID;
                     dadosTratados = tratamentoDados.TratarDados(clienteDados, dadosTratados, cliente.STATUS);
                 } catch (error) {
-                    console.error("Erro ao converter JSON:", error);
+                    //console.error("Erro ao converter JSON:", error);
                     logger.error("Erro ao converter JSON:", error);
                 }
             } else {
-                console.error("Erro: SERIALIZED_DATA está undefined para o cliente", cliente.DOCUMENTNR);
+                //console.error("Erro: SERIALIZED_DATA está undefined para o cliente", cliente.DOCUMENTNR);
                 logger.error("Erro: SERIALIZED_DATA está undefined para o cliente", cliente.DOCUMENTNR);
             }
         });
-        console.log(dadosTratados);
+        //console.log(dadosTratados);
         //Iterar enquanto for vazio
         if (dadosTratados && Object.keys(dadosTratados).length > 0) {
 
@@ -77,9 +79,9 @@ async function conectarBancoOracle() {
                             cep: postalcd, // Código postal do endereço
                             tipoend: '1' // Tipo de endereço (1 = Principal)
                         };
-                        console.log("TABELA DE ENDERECOS: \n");
-                        console.table(parametroEndereco);
-                        console.table(address);
+                        //console.log("TABELA DE ENDERECOS: \n");
+                        //console.table(parametroEndereco);
+                        //console.table(address);
 
                         await bpmClienteEnderecos.bpmClienteEnderecos(parametroEndereco, address);
                     }
@@ -92,9 +94,9 @@ async function conectarBancoOracle() {
                             fonecmpl: phone.fonecmpl || null, // Complemento do telefone
                             fonenro: phonenr // Número do telefone 
                         };
-                        console.log("TABELA DE CONTATOS: \n");
-                        console.table(parametroTelefone);
-                        console.table(phone);
+                        //console.log("TABELA DE CONTATOS: \n");
+                        //console.table(parametroTelefone);
+                        //console.table(phone);
 
                         await bpmClienteTelefones.bpmClienteTelefones(parametroTelefone, phone);
                     }
@@ -107,23 +109,23 @@ async function conectarBancoOracle() {
                         await bpmClienteRca.bpmClienteRca(representante, cliente, parametroTelefone, bpmCliente);
                     
                     } else {
-                        console.log("Nenhum representante encontrado para a company_id:", company_idVendedores);
+                        //console.log("Nenhum representante encontrado para a company_id:", company_idVendedores);
                         logger.debug("Nenhum representante encontrado para a company_id:", company_idVendedores);
                     }
 
                 } catch (error) {
-                    console.log(error);
+                    //console.log(error);
                     logger.error('Erro ao na sincronia',error);
                 }
 
             });
         } else {
-            console.log("O objeto dadosTratados está vazio!");
+            //console.log("O objeto dadosTratados está vazio!");
             logger.warn("O objeto dadosTratados está vazio!");
         }
 
     } catch (error) {
-        console.error("Erro ao conectar:", error);
+        //console.error("Erro ao conectar:", error);
         logger.error("Erro ao conectar:", error);
     } finally {
         if (connection) {
@@ -132,7 +134,7 @@ async function conectarBancoOracle() {
                 console.log("Conexao encerrada com sucesso");
                 logger.info("Conexao encerrada com sucesso");
             } catch (ErroEncerramento) {
-                console.log("Erro ao encerrar conexao: ", ErroEncerramento);
+                //console.log("Erro ao encerrar conexao: ", ErroEncerramento);
                 logger.error("Erro ao encerrar conexao: ", ErroEncerramento);
             }
         }
@@ -155,12 +157,12 @@ async function BuscarVendedores(connection) {
 
             return ids_vendedores;
         } else {
-            console.log("Nenhum vendedor ativo encontrado!");
+            //console.log("Nenhum vendedor ativo encontrado!");
             logger.warn("Nenhum vendedor ativo encontrado!");
             return [];
         }
     } catch (error) {
-        console.error("Erro ao buscar vendedores ativos no sellers:", error);
+        //console.error("Erro ao buscar vendedores ativos no sellers:", error);
         logger.error("Erro ao buscar vendedores ativos no sellers:", error);
         return [];
     }
@@ -170,7 +172,7 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
     try {
 
         if (ids_vendedores.length === 0) {
-            console.log("Nenhum ID de vendedor fornecido.");
+            //console.log("Nenhum ID de vendedor fornecido.");
             logger.debug("Nenhum ID de vendedor fornecido.");
             return [];
         }
@@ -201,7 +203,7 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
         WHERE cs.SELLER_ID IN (${binds}) 
           AND cs.STATUS IN ('PEN')
           AND G.SEQPESSOA IS NULL
-          AND TRUNC(c.CREATED_AT) >= SYSDATE - 560
+          AND TRUNC(c.CREATED_AT) >= SYSDATE - ${dateRange}
           AND BC.NROCGCCPF IS NULL
     `;
         // Criar um objeto de binds dinâmico
@@ -213,9 +215,9 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
         let resultado = await connection.execute(sql, bindParams, { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         if (resultado.rows.length > 0) {
-            console.log("\n**Clientes encontrados:**");
-            logger.debug("\n**Clientes encontrados:**");
-            console.table(resultado.rows);
+            //console.log("\n**Clientes encontrados:**");
+            logger.debug("**Clientes encontrados:**");
+            //console.table(resultado.rows);
 
             // **Converter os CLOBs para strings**
             for (let row of resultado.rows) {
@@ -225,13 +227,13 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
             }
 
         } else {
-            console.log("Nenhum cliente encontrado!");
+            //console.log("Nenhum cliente encontrado!");
             logger.warn("Nenhum cliente encontrado!");
         }
 
         return resultado;
     } catch (error) {
-        console.error("Erro ao buscar clientes com base no ID do vendedor", error);
+        //console.error("Erro ao buscar clientes com base no ID do vendedor", error);
         logger.error("Erro ao buscar clientes com base no ID do vendedor", error);
         return [];
     }
@@ -250,17 +252,17 @@ async function buscarRepresentante(connection, company_id) {
         `;
 
         const result = await connection.execute(query, { company_id }, { outFormat: oracledb.OUT_FORMAT_OBJECT });
-        console.log("Resultado consulta RCA na MAD_REPRESENTANTE"+result.rows);
+        //console.log("Resultado consulta RCA na MAD_REPRESENTANTE"+result.rows);
         return result.rows.length > 0 ? result.rows[0] : null;
 
     } catch (error) {
-        console.error("Erro ao buscar representante:", error);
+        //console.error("Erro ao buscar representante:", error);
         logger.error("Erro ao buscar representante:", error);
         throw error;
     } finally {
         if (connection) {
             await connection.close();
-            console.log("Conexão encerrada com sucesso após buscar o representante.");
+            //console.log("Conexão encerrada com sucesso após buscar o representante.");
             logger.info("Conexão encerrada com sucesso após buscar o representante.");
         }
     }

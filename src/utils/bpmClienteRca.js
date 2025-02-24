@@ -46,7 +46,7 @@ class bpmClienteRca {
                     nrosegmento: representante.nrosegmento
                 }, { autoCommit: true });
 
-                console.log(`RCA atualizado para o cliente ${bpmCliente}`);
+                //console.log(`RCA atualizado para o cliente ${bpmCliente}`);
                 logger.debug(`RCA atualizado para o cliente ${bpmCliente}`);
             } else {
                 // Insere um novo RCA
@@ -72,18 +72,19 @@ class bpmClienteRca {
                     nrosegmento: representante.nrosegmento
                 }, { autoCommit: true });
 
-                console.log(`Novo RCA associado ao cliente ${bpmCliente}`);
+                //console.log(`Novo RCA associado ao cliente ${bpmCliente}`);
                 logger.debug(`Novo RCA associado ao cliente ${bpmCliente}`);
             }
 
 
         } catch (error) {
-            console.error("Erro ao criar/atualizar RCA:", error);
+            //console.error("Erro ao criar/atualizar RCA:", error);
             logger.error("Erro ao criar/atualizar RCA:", error);
             throw error;
         } finally {
             if (connection) {
                 await connection.close();
+                logger.info("Conexão encerrada com sucesso após manipular BPM_CLIENTE_RCA para o cliente : "+bpmCliente);
             }
         }
 

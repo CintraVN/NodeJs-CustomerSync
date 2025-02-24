@@ -8,18 +8,22 @@ const logFormat = format.combine(
 );
 
 const logger = createLogger({
-    level: 'info', // Nível padrão de log
+    level: 'debug', // Captura todos os níveis a partir de debug
     format: logFormat,
     transports: [
-        new transports.Console(), // Exibe no console
-        new transports.File({ filename: 'logs/error.log', level: 'error' }), // Salva erros em arquivo
-        new transports.File({ filename: 'logs/combined.log' }) // Salva todos os logs em arquivo
+        new transports.Console({ level: 'debug' }), // Console captura todos os níveis
+        new transports.File({ filename: 'logs/error.log', level: 'error' }), // Apenas erros
+        new transports.File({ filename: 'logs/combined.log' }) // Captura todos os níveis sem restrição
     ]
 });
-/*
-// Desativar o log no console para producao
+
+// Desativar o log no console para produção
 if (process.env.NODE_ENV === 'production') {
-    logger.remove(new transports.Console());
+    logger.transports.forEach((t) => {
+        if (t instanceof transports.Console) {
+            logger.remove(t);
+        }
+    });
 }
-*/
+
 module.exports = logger;
