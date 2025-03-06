@@ -1,124 +1,39 @@
-2025-02-24 16:10:29 [INFO]: DB_CONNECTION_STRING: 192.168.250.42:1521/TESTE
-2025-02-24 16:10:29 [INFO]: Tentando conectar ao Oracle...
-2025-02-24 16:10:29 [ERROR]: Erro ao conectar: NJS-116: password verifier type 0x939 is not supported by node-oracledb in Thin mode
-2025-02-24 16:15:29 [INFO]: DB_CONNECTION_STRING: 192.168.250.42:1521/TESTE
-2025-02-24 16:15:29 [INFO]: Tentando conectar ao Oracle...
-2025-02-24 16:15:29 [ERROR]: Erro ao conectar: NJS-116: password verifier type 0x939 is not supported by node-oracledb in Thin mode
-2025-02-24 16:16:30 [INFO]: DB_CONNECTION_STRING: 192.168.250.42:1521/TESTE
-2025-02-24 16:16:30 [INFO]: Tentando conectar ao Oracle...
-2025-02-24 16:16:31 [INFO]: Conectado ao Oracle!
-2025-02-24 16:16:31 [INFO]: ***Versão do servidor: 19.23.0.0.0***
-2025-02-24 16:16:31 [DEBUG]: **Clientes encontrados:**
-2025-02-24 16:16:31 [INFO]: Conexao encerrada com sucesso
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 57211633000166 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 02515669000141 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 06203932000118 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 05428641000165 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 05786596000110 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 28492265000173 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 02548719000197 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 02100710000119 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 45892445000161 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 68452507000110 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 08834866000100 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 14690011000155 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 19640100000100 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 05207715000133 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 07680547000124 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 13775684000145 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 52742574000139 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 26577112000101 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 27768628000198 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 68888262000178 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 09942016000198 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 03928772000186 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 15136029000172 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 61589826000122 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [DEBUG]: Cliente atualizado/criado com sucesso na BPM_CLIENTE com o ID:  427397
-2025-02-24 16:16:31 [DEBUG]: Cliente atualizado/criado com sucesso na BPM_CLIENTE com o ID:  427400
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [DEBUG]: Cliente atualizado/criado com sucesso na BPM_CLIENTE com o ID:  427401
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao criar/atualizar cliente: 53543625000166 ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:31 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
-2025-02-24 16:16:31 [ERROR]: Erro ao na sincronia ORA-01400: cannot insert NULL into ("HUB"."BPM_CLIENTES"."EMAILNFE")
-2025-02-24 16:16:32 [DEBUG]: Nova origem associada ao cliente 427397 Origem: 14
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_ORIGENS para o cliente : 427397
-2025-02-24 16:16:32 [DEBUG]: Nova origem associada ao cliente 427401 Origem: 14
-2025-02-24 16:16:32 [DEBUG]: Nova origem associada ao cliente 427400 Origem: 14
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_ORIGENS para o cliente : 427401
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_ORIGENS para o cliente : 427400
-2025-02-24 16:16:32 [DEBUG]: Cidade após normalização inicial: POCOS DE CALDAS
-2025-02-24 16:16:32 [DEBUG]: Cidade após normalização inicial: COTIA
-2025-02-24 16:16:32 [DEBUG]: Cidade após normalização inicial: EMBU-GUACU
-2025-02-24 16:16:32 [DEBUG]: Cidade encontrada na lista de variações: EMBUGUACU
-2025-02-24 16:16:32 [DEBUG]: Novo endereço associado ao cliente 427397
-2025-02-24 16:16:32 [DEBUG]: Novo endereço associado ao cliente 427401
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_ENDERECOS para o cliente : 427401
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_ENDERECOS para o cliente : 427397
-2025-02-24 16:16:32 [DEBUG]: Novo endereço associado ao cliente 427400
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_ENDERECOS para o cliente : 427400
-2025-02-24 16:16:32 [DEBUG]: Novo telefone associado ao cliente 427397
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_TELEFONES para o cliente : 427397
-2025-02-24 16:16:32 [DEBUG]: Novo telefone associado ao cliente 427401
-2025-02-24 16:16:32 [DEBUG]: Novo telefone associado ao cliente 427400
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_TELEFONES para o cliente : 427401
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_TELEFONES para o cliente : 427400
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após buscar o representante.
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após buscar o representante.
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após buscar o representante.
-2025-02-24 16:16:32 [DEBUG]: Novo RCA associado ao cliente 427397
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_RCA para o cliente : 427397
-2025-02-24 16:16:32 [DEBUG]: Novo RCA associado ao cliente 427401
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_RCA para o cliente : 427401
-2025-02-24 16:16:32 [DEBUG]: Novo RCA associado ao cliente 427400
-2025-02-24 16:16:32 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_RCA para o cliente : 427400
+2025-03-06 10:11:59 [INFO]: DB_CONNECTION_STRING: 192.168.250.22:1521/orcldb
+2025-03-06 10:11:59 [INFO]: Tentando conectar ao Oracle...
+2025-03-06 10:11:59 [INFO]: Conectado ao Oracle!
+2025-03-06 10:11:59 [INFO]: ***Versão do servidor: 19.23.0.0.0***
+2025-03-06 10:12:01 [WARN]: Nenhum cliente encontrado!
+2025-03-06 10:12:01 [WARN]: O objeto dadosTratados está vazio!
+2025-03-06 10:12:01 [INFO]: Conexao encerrada com sucesso
+2025-03-06 10:18:25 [INFO]: DB_CONNECTION_STRING: 192.168.250.22:1521/orcldb
+2025-03-06 10:18:25 [INFO]: Tentando conectar ao Oracle...
+2025-03-06 10:18:25 [INFO]: Conectado ao Oracle!
+2025-03-06 10:18:25 [INFO]: ***Versão do servidor: 19.23.0.0.0***
+2025-03-06 10:18:26 [DEBUG]: **Clientes encontrados:**
+2025-03-06 10:18:26 [INFO]: Conexao encerrada com sucesso
+2025-03-06 10:18:26 [DEBUG]: Cliente atualizado/criado com sucesso na BPM_CLIENTE com o ID:  455913
+2025-03-06 10:18:26 [INFO]: Conexão encerrada com sucesso após criar/atualizar o cliente.
+2025-03-06 10:18:26 [DEBUG]: Nova origem associada ao cliente 455913 Origem: 11
+2025-03-06 10:18:26 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_ORIGENS para o cliente : 455913
+2025-03-06 10:18:26 [DEBUG]: Cidade após normalização inicial: SERRA DOS AIMORES
+2025-03-06 10:18:26 [DEBUG]: Novo endereço associado ao cliente 455913
+2025-03-06 10:18:26 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_ENDERECOS para o cliente : 455913
+2025-03-06 10:18:26 [DEBUG]: Novo telefone associado ao cliente 455913
+2025-03-06 10:18:26 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_TELEFONES para o cliente : 455913
+2025-03-06 10:18:26 [INFO]: Conexão encerrada com sucesso após buscar o representante.
+2025-03-06 10:18:27 [DEBUG]: Novo RCA associado ao cliente 455913
+2025-03-06 10:18:27 [INFO]: Conexão encerrada com sucesso após manipular BPM_CLIENTE_RCA para o cliente : 455913
+2025-03-06 10:20:25 [INFO]: DB_CONNECTION_STRING: 192.168.250.22:1521/orcldb
+2025-03-06 10:20:26 [INFO]: Tentando conectar ao Oracle...
+2025-03-06 10:20:26 [INFO]: Conectado ao Oracle!
+2025-03-06 10:20:26 [INFO]: ***Versão do servidor: 19.23.0.0.0***
+2025-03-06 10:20:26 [WARN]: Nenhum cliente encontrado!
+2025-03-06 10:20:26 [WARN]: O objeto dadosTratados está vazio!
+2025-03-06 10:20:26 [INFO]: Conexao encerrada com sucesso
+2025-03-06 10:21:25 [INFO]: DB_CONNECTION_STRING: 192.168.250.22:1521/orcldb
+2025-03-06 10:21:25 [INFO]: Tentando conectar ao Oracle...
+2025-03-06 10:21:25 [INFO]: Conectado ao Oracle!
+2025-03-06 10:21:25 [INFO]: ***Versão do servidor: 19.23.0.0.0***
+2025-03-06 10:21:26 [WARN]: Nenhum cliente encontrado!
+2025-03-06 10:21:26 [WARN]: O objeto dadosTratados está vazio!
+2025-03-06 10:21:26 [INFO]: Conexao encerrada com sucesso
