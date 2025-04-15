@@ -12,16 +12,22 @@ class bpmClientes {
                 SELECT id FROM hub.bpm_clientes
                 WHERE nrocgccpf = :nrocgccpf AND digcgccpf = :digcgccpf
             `;
-            const verificaResultado = await connection.execute(queryVerifica, {
+            const verificaResultado = await connection.execute(
+              queryVerifica, 
+              {
                 nrocgccpf: cliente.nrocgccpf,
                 digcgccpf: cliente.digcgccpf
-            });
-
-            let bpmClienteId = verificaResultado.rows[0];
+              },
+              { 
+                outFormat: oracledb.OUT_FORMAT_OBJECT 
+              });
+            //logger.debug(`Resultado da consulta de verificação: ${JSON.stringify(verificaResultado.rows[0], null, 2)}`);
+            let bpmClienteId //= verificaResultado.rows[0].ID;
 
             if (verificaResultado.rows.length > 0) {
                 // Cliente já existe -> Atualiza os dados
-                bpmClienteId = verificaResultado.rows[0]; // ID do cliente encontrado
+                bpmClienteId = verificaResultado.rows[0].ID; // ID do cliente encontrado
+                logger.debug(`Cliente já existente - ID recuperado: ${bpmClienteId}`);
 
                 const updateQuery = `
                     UPDATE hub.bpm_clientes
@@ -32,11 +38,25 @@ class bpmClientes {
                         porte = :porte, status = :status, dtaatualizacao = SYSDATE
                     WHERE id = :id
                 `;
-                await connection.execute(updateQuery, {
-                    ...cliente,
-                    id: bpmClienteId
-                }, { autoCommit: true });
-
+                
+                    const dadosCliente = {
+                    nomerazao: cliente.nomerazao,
+                    fantasia: cliente.fantasia,
+                    email: cliente.email,
+                    emailnfe: cliente.emailnfe,
+                    fisicajuridica: cliente.fisicajuridica,
+                    inscricaorg: cliente.inscricaorg,
+                    representante: cliente.representante,
+                    seqpessoa: cliente.seqpessoa || null,
+                    observacao: cliente.observacao || null,
+                    ramo_atividade: cliente.ramo_atividade || null,
+                    porte: cliente.porte || null,
+                    status: cliente.status,
+                    id: bpmClienteId // no caso do UPDATE
+                  };
+                  
+                await connection.execute(updateQuery, dadosCliente, { autoCommit: true });
+                logger.debug(`Cliente atualizado com sucesso na BPM_CLIENTE com o ID:  ${bpmClienteId}`);
             } else {
                 // Cliente não existe -> Insere um novo
                 const insertQuery = `
@@ -69,6 +89,7 @@ class bpmClientes {
                 
 
                 bpmClienteId = result.outBinds.id[0]; // Pega o ID gerado
+                logger.debug(`Cliente criado com sucesso na BPM_CLIENTE com o ID:  ${bpmClienteId}`);
             }
 
             // Se for cliente IFC precisa gravar a origem 'E'
@@ -79,9 +100,10 @@ class bpmClientes {
                     WHERE id = :id
                 `;
                 await connection.execute(updateOrigemQuery, { origem, id: bpmClienteId }, { autoCommit: true });
+                logger.debug(`Origem atualizada com sucesso na BPM_CLIENTE_ORIGENS com o ID:  ${bpmClienteId}`);
             }
 
-            logger.debug(`Cliente atualizado/criado com sucesso na BPM_CLIENTE com o ID:  ${bpmClienteId}`);
+            
             return bpmClienteId;
         } catch (error) {
             logger.error(`Erro ao criar/atualizar cliente: ${cliente.nrocgccpf}${cliente.digcgccpf}`, error);
@@ -89,7 +111,7 @@ class bpmClientes {
         } finally {
             if (connection) {
                 await connection.close();
-                logger.info("Conexão encerrada com sucesso após criar/atualizar o cliente.");
+                logger.info("Conexão encerrada.");
             }
         }
     }

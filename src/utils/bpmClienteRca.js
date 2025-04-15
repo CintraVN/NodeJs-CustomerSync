@@ -4,7 +4,15 @@ const logger = require('../../src/utils/logger');
 
 class bpmClienteRca {
     static async bpmClienteRca(representante, customer, paramsPhone, bpmCliente) {
-        
+
+            representante = {
+                nrorepresentante: representante.NROREPRESENTANTE,
+                nroempresa: representante.NROEMPRESA,
+                nroequipe: representante.NROEQUIPE,
+                apelido: representante.APELIDO,
+                nrosegmento: representante.NROSEGMENTO
+              };
+              
         let connection;
         
         try {
@@ -46,7 +54,7 @@ class bpmClienteRca {
                     nrosegmento: representante.nrosegmento
                 }, { autoCommit: true });
 
-                logger.debug(`RCA atualizado para o cliente ${bpmCliente}`);
+                logger.debug(`RCA atualizado para o cliente ${bpmCliente} com o representante ${representante.nrorepresentante}`);
             } else {
                 // Insere um novo RCA
                 const insertQuery = `
