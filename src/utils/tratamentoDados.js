@@ -26,10 +26,18 @@ class tratamentoDados {
                     representante: clienteDados.representativenm,
                     seqpessoa: clienteDados.seqpessoa || null,
                     ramo_atividade: clienteDados.ramo_atividade || null,
-                    status: status || null
+                    status: status || null,
+
+                    company_id: clienteDados.company_id || null,//adicionado 20/05/25
+                    origem_id: clienteDados.origem_id || null//adicionado 22/05/25
+                    //status: clienteDados.cliente_status || null//adicionado 22/05/25
                 };
             }
 
+            // Atualiza origem_id e company_id mesmo se já existirem
+            dadosTratados[clienteDados.documentnr].origem_id = clienteDados.origem_id || null;
+            dadosTratados[clienteDados.documentnr].company_id = clienteDados.company_id || null;
+            
             // Acumula os endereços no dadosTratados
             if (clienteDados.addresses && clienteDados.addresses.length > 0) {
                 let address = clienteDados.addresses[0];

@@ -2,9 +2,9 @@ const oracledb = require('oracledb');
 const dbconnect = require('./src/config/dbconnect.js');
 const tratamentoDados = require('./src/utils/tratamentoDados.js');
 // Ativar o modo Thick e apontar para o Oracle Instant Client
-//oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_basic\\instantclient_23_7' });
+oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_basic\\instantclient_23_7' });
 // Força o modo Thick
-oracledb.initOracleClient({ libDir: '/opt/oracle/instantclient_19_18' });
+//oracledb.initOracleClient({ libDir: '/opt/oracle/instantclient_19_18' });
 const bpmClientes = require('./src/utils/bpmClientes.js');
 const bpmClienteOrigens = require('./src/utils/bpmClienteOrigens.js');
 const bpmClienteEnderecos = require('./src/utils/bpmClienteEnderecos.js');
@@ -20,21 +20,21 @@ async function conectarBancoOracle() {
     let connection;
 
     try {
-        console.log("Tentando conectar ao Oracle...");
-        logger.info("Tentando conectar ao Oracle...");
+        //console.log("Tentando conectar ao Oracle...");
+        //logger.info("Tentando conectar ao Oracle...");
         connection = await oracledb.getConnection(dbconnect);
 
-        console.log("Conectado ao Oracle!");
-        logger.info("Conectado ao Oracle!");
-        console.log("***Versão do servidor: " + connection.oracleServerVersionString + "***");
-        logger.info("***Versão do servidor: " + connection.oracleServerVersionString + "***");
+        //console.log("Conectado ao Oracle!");
+        //logger.info("Conectado ao Oracle!");
+        //console.log("***Versão do servidor: " + connection.oracleServerVersionString + "***");
+        //logger.info("***Versão do servidor: " + connection.oracleServerVersionString + "***");
 
         let ids_vendedores = await BuscarVendedores(connection);
         let clientesPorVendedor = await BuscarClientePorIDdeVendedor(connection, ids_vendedores);
         let dadosTratados = {};
-        let clienteStatus = null;
-        let origem_idVendedores = null;
-        let company_idVendedores = null;
+        //let clienteStatus = null;
+        //let origem_idVendedores = null;
+        //let company_idVendedores = null;
         let parametroTelefone;
 
 
@@ -43,9 +43,13 @@ async function conectarBancoOracle() {
             if (cliente.SERIALIZED_DATA) {
                 try {
                     let clienteDados = JSON.parse(cliente.SERIALIZED_DATA); // Converte JSON corretamente
-                    clienteStatus = cliente.STATUS;
-                    origem_idVendedores = cliente.ORIGEM_ID;
-                    company_idVendedores = cliente.COMPANY_ID;
+                    clienteDados.cliente_status = cliente.STATUS; //adicionado para teste
+                    //clienteStatus = cliente.STATUS;
+                    clienteDados.origem_id = cliente.ORIGEM_ID;//adicionado para teste
+                    //origem_idVendedores = cliente.ORIGEM_ID;
+                    //company_idVendedores = cliente.COMPANY_ID;
+                    clienteDados.company_id = cliente.COMPANY_ID;//modificado dia 21/05/2025
+                    //logger.debug(`🔍 valore dentro do FOR clienteDados.company_id: ${clienteDados.company_id}`);//teste
                     dadosTratados = tratamentoDados.TratarDados(clienteDados, dadosTratados, cliente.STATUS);
                 } catch (error) {
                     logger.error("Erro ao converter JSON:", error);
@@ -67,10 +71,10 @@ async function conectarBancoOracle() {
 
                     let parametroOrigens = {
                         'cliente_id': bpmCliente,
-                        'origem_id': origem_idVendedores
+                        'origem_id': cliente.origem_id//origem_idVendedores trocado por cliente.origem_id
                     }
 
-                    await bpmClienteOrigens.updateOrCreateBpmClienteOrigens(parametroOrigens, clienteStatus);
+                    await bpmClienteOrigens.updateOrCreateBpmClienteOrigens(parametroOrigens, cliente.status);//clienteStatus trocado por cliente.status
 
                     // Associa enderecos
                     for (const [postalcd, address] of Object.entries(cliente.addressList)) {
@@ -96,14 +100,18 @@ async function conectarBancoOracle() {
                     }
 
                     // Busca o representante na tabela MAD_REPRESENTANTE
-                    let representante = await buscarRepresentante(connection, company_idVendedores);
+                    let companyIdTratado = cliente.company_id;//adicionado para teste
+                    if (companyIdTratado === 804) companyIdTratado = 801;//adicionado para teste
+                    //logger.debug(`🔍 Buscando representante para cliente ${DOCUMENTNR} com company_id: ${companyIdTratado}`);//teste
+                  
+                    let representante = await buscarRepresentante(connection, companyIdTratado);//company_idVendedores trocado para companyIdTratado
                     if (representante) {
 
                         // Chama a função para atualizar ou criar o RCA do cliente
                         await bpmClienteRca.bpmClienteRca(representante, cliente, parametroTelefone, bpmCliente);
                     
                     } else {
-                        logger.debug("Nenhum representante encontrado para a company_id:", company_idVendedores);
+                        logger.debug("Nenhum representante encontrado para a company_id:", companyIdTratado);//company_idVendedores trocado para companyIdTratado
                     }
 
                 } catch (error) {
@@ -121,8 +129,8 @@ async function conectarBancoOracle() {
         if (connection) {
             try {
                 await connection.close();
-                console.log("Conexao encerrada com sucesso");
-                logger.info("Conexao encerrada com sucesso");
+                //console.log("Conexao encerrada com sucesso");
+                //logger.info("Conexao encerrada com sucesso");
             } catch (ErroEncerramento) {
                 logger.error("Erro ao encerrar conexao: ", ErroEncerramento);
             }
@@ -201,7 +209,7 @@ async function BuscarClientePorIDdeVendedor(connection, ids_vendedores) {
         let resultado = await connection.execute(sql, bindParams, { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         if (resultado.rows.length > 0) {
-            logger.debug("**Clientes encontrados:**");
+            //logger.debug("**Clientes encontrados:**");
 
             // **Converter os CLOBs para strings**
             for (let row of resultado.rows) {
@@ -230,10 +238,11 @@ async function buscarRepresentante(connection, company_id) {
             SELECT nroempresa, nrorepresentante, nroequipe, apelido, nrosegmento
             FROM CONSINCO.MAD_REPRESENTANTE
             WHERE NROREPRESENTANTE BETWEEN ${nrorepresentante1} AND ${nrorepresentante2}
-            AND NROEMPRESA = :company_id
+            AND (NROEMPRESA = :company_id OR (:company_id = 804 AND NROEMPRESA = 801))
         `;
 
         const result = await connection.execute(query, { company_id }, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        //logger.debug(`Resultado da consulta de representante (company_id ${company_id}):`, result.rows);
         return result.rows.length > 0 ? result.rows[0] : null;
 
     } catch (error) {

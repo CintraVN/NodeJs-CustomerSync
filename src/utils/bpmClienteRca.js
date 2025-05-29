@@ -6,11 +6,11 @@ class bpmClienteRca {
     static async bpmClienteRca(representante, customer, paramsPhone, bpmCliente) {
 
             representante = {
-                nrorepresentante: representante.NROREPRESENTANTE,
-                nroempresa: representante.NROEMPRESA,
-                nroequipe: representante.NROEQUIPE,
-                apelido: representante.APELIDO,
-                nrosegmento: representante.NROSEGMENTO
+                nrorepresentante: representante.nrorepresentante || representante.NROREPRESENTANTE,
+                nroempresa: representante.nroempresa || representante.NROEMPRESA,
+                nroequipe: representante.nroequipe || representante.NROEQUIPE,
+                apelido: representante.apelido || representante.APELIDO,
+                nrosegmento: representante.nrosegmento || representante.NROSEGMENTO
               };
               
         let connection;
@@ -79,7 +79,7 @@ class bpmClienteRca {
                     nrosegmento: representante.nrosegmento
                 }, { autoCommit: true });
 
-                logger.debug(`Novo RCA associado ao cliente ${bpmCliente}`);
+                logger.debug(`Novo RCA ${representante.nrorepresentante} associado ao cliente ${bpmCliente}`);
             }
 
         } catch (error) {
