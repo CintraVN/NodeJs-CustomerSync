@@ -1,10 +1,10 @@
 const oracledb = require('oracledb');
 const dbconnect = require('./src/config/dbconnect.js');
 const tratamentoDados = require('./src/utils/tratamentoDados.js');
-// Ativar o modo Thick e apontar para o Oracle Instant Client
-oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_basic\\instantclient_23_7' });
-// Força o modo Thick
-//oracledb.initOracleClient({ libDir: '/opt/oracle/instantclient_19_18' });
+// Ativar o modo Thick e apontar para o Oracle Instant Client -> rodar localmente
+//oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_basic\\instantclient_23_7' });
+// Força o modo Thick -> usar docker
+oracledb.initOracleClient({ libDir: '/opt/oracle/instantclient_19_18' });
 const bpmClientes = require('./src/utils/bpmClientes.js');
 const bpmClienteOrigens = require('./src/utils/bpmClienteOrigens.js');
 const bpmClienteEnderecos = require('./src/utils/bpmClienteEnderecos.js');
@@ -32,9 +32,6 @@ async function conectarBancoOracle() {
         let ids_vendedores = await BuscarVendedores(connection);
         let clientesPorVendedor = await BuscarClientePorIDdeVendedor(connection, ids_vendedores);
         let dadosTratados = {};
-        //let clienteStatus = null;
-        //let origem_idVendedores = null;
-        //let company_idVendedores = null;
         let parametroTelefone;
 
 
@@ -43,13 +40,10 @@ async function conectarBancoOracle() {
             if (cliente.SERIALIZED_DATA) {
                 try {
                     let clienteDados = JSON.parse(cliente.SERIALIZED_DATA); // Converte JSON corretamente
-                    clienteDados.cliente_status = cliente.STATUS; //adicionado para teste
+                    clienteDados.cliente_status = cliente.STATUS; 
                     //clienteStatus = cliente.STATUS;
-                    clienteDados.origem_id = cliente.ORIGEM_ID;//adicionado para teste
-                    //origem_idVendedores = cliente.ORIGEM_ID;
-                    //company_idVendedores = cliente.COMPANY_ID;
+                    clienteDados.origem_id = cliente.ORIGEM_ID;
                     clienteDados.company_id = cliente.COMPANY_ID;//modificado dia 21/05/2025
-                    //logger.debug(`🔍 valore dentro do FOR clienteDados.company_id: ${clienteDados.company_id}`);//teste
                     dadosTratados = tratamentoDados.TratarDados(clienteDados, dadosTratados, cliente.STATUS);
                 } catch (error) {
                     logger.error("Erro ao converter JSON:", error);
@@ -100,9 +94,9 @@ async function conectarBancoOracle() {
                     }
 
                     // Busca o representante na tabela MAD_REPRESENTANTE
-                    let companyIdTratado = cliente.company_id;//adicionado para teste
-                    if (companyIdTratado === 804) companyIdTratado = 801;//adicionado para teste
-                    //logger.debug(`🔍 Buscando representante para cliente ${DOCUMENTNR} com company_id: ${companyIdTratado}`);//teste
+                    let companyIdTratado = cliente.company_id;
+                    if (companyIdTratado === 804) companyIdTratado = 801;
+                    
                   
                     let representante = await buscarRepresentante(connection, companyIdTratado);//company_idVendedores trocado para companyIdTratado
                     if (representante) {

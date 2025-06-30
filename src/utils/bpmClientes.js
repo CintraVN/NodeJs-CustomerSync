@@ -22,7 +22,7 @@ class bpmClientes {
                 outFormat: oracledb.OUT_FORMAT_OBJECT 
               });
             //logger.debug(`Resultado da consulta de verificação: ${JSON.stringify(verificaResultado.rows[0], null, 2)}`);
-            let bpmClienteId //= verificaResultado.rows[0].ID;
+            let bpmClienteId 
 
             if (verificaResultado.rows.length > 0) {
                 // Cliente já existe -> Atualiza os dados
