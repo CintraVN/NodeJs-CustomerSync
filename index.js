@@ -2,9 +2,9 @@ const oracledb = require('oracledb');
 const dbconnect = require('./src/config/dbconnect.js');
 const tratamentoDados = require('./src/utils/tratamentoDados.js');
 // Ativar o modo Thick e apontar para o Oracle Instant Client -> rodar localmente
-//oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_basic\\instantclient_23_7' });
+oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_basic\\instantclient_23_7' });
 // Força o modo Thick -> usar docker
-oracledb.initOracleClient({ libDir: '/opt/oracle/instantclient_19_18' });
+//oracledb.initOracleClient({ libDir: '/opt/oracle/instantclient_19_18' });
 const bpmClientes = require('./src/utils/bpmClientes.js');
 const bpmClienteOrigens = require('./src/utils/bpmClienteOrigens.js');
 const bpmClienteEnderecos = require('./src/utils/bpmClienteEnderecos.js');
@@ -13,7 +13,7 @@ const bpmClienteRca = require('./src/utils/bpmClienteRca.js');
 const logger = require('./src/utils/logger.js');
 require('dotenv').config();
 const dateRange = process.env.SQL_DATE_RANGE || 15; //definir dias da pesquisa.
-const nrorepresentante1 = process.env.NROREPRESENTANTE1; 
+const nrorepresentante1 = process.env.NROREPRESENTANTE1;
 const nrorepresentante2 = process.env.NROREPRESENTANTE2;
 
 async function conectarBancoOracle() {
@@ -40,7 +40,7 @@ async function conectarBancoOracle() {
             if (cliente.SERIALIZED_DATA) {
                 try {
                     let clienteDados = JSON.parse(cliente.SERIALIZED_DATA); // Converte JSON corretamente
-                    clienteDados.cliente_status = cliente.STATUS; 
+                    clienteDados.cliente_status = cliente.STATUS;
                     //clienteStatus = cliente.STATUS;
                     clienteDados.origem_id = cliente.ORIGEM_ID;
                     clienteDados.company_id = cliente.COMPANY_ID;//modificado dia 21/05/2025
@@ -83,7 +83,7 @@ async function conectarBancoOracle() {
 
                     // Associa telefones
                     for (const [phonenr, phone] of Object.entries(cliente.phoneList)) {
-                         parametroTelefone = {
+                        parametroTelefone = {
                             cliente_id: bpmCliente, // ID do cliente na BPM_CLIENTES
                             foneddd: phone.foneddd || null, // Código DDD
                             fonecmpl: phone.fonecmpl || null, // Complemento do telefone
@@ -96,20 +96,20 @@ async function conectarBancoOracle() {
                     // Busca o representante na tabela MAD_REPRESENTANTE
                     let companyIdTratado = cliente.company_id;
                     if (companyIdTratado === 804) companyIdTratado = 801;
-                    
-                  
+
+
                     let representante = await buscarRepresentante(connection, companyIdTratado);//company_idVendedores trocado para companyIdTratado
                     if (representante) {
 
                         // Chama a função para atualizar ou criar o RCA do cliente
                         await bpmClienteRca.bpmClienteRca(representante, cliente, parametroTelefone, bpmCliente);
-                    
+
                     } else {
                         logger.debug("Nenhum representante encontrado para a company_id:", companyIdTratado);//company_idVendedores trocado para companyIdTratado
                     }
 
                 } catch (error) {
-                    logger.error('Erro ao na sincronia',error);
+                    logger.error('Erro na sincronia', error);
                 }
 
             });
@@ -141,7 +141,7 @@ async function BuscarVendedores(connection) {
     try {
         let select = "select * from hub.sellers where status = 'A' and id not in (4,5)";
         let resultado_vendedores = await connection.execute(`${select}`, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-        
+
         if (resultado_vendedores.rows.length > 0) {
 
             let ids_vendedores = resultado_vendedores.rows.map(vendedor => vendedor.ID).sort((a, b) => a - b);
